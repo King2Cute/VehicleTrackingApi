@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTracking", "VehicleTracking\VehicleTracking.csproj", "{496A9826-5C20-4472-8115-000AA31391C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleTracking", "VehicleTracking\VehicleTracking.csproj", "{496A9826-5C20-4472-8115-000AA31391C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTracking.Core", "VehicleTracking.Core\VehicleTracking.Core.csproj", "{AA7CEDD3-30C5-4863-9EDE-1B69C13DA924}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{496A9826-5C20-4472-8115-000AA31391C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{496A9826-5C20-4472-8115-000AA31391C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{496A9826-5C20-4472-8115-000AA31391C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA7CEDD3-30C5-4863-9EDE-1B69C13DA924}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA7CEDD3-30C5-4863-9EDE-1B69C13DA924}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA7CEDD3-30C5-4863-9EDE-1B69C13DA924}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA7CEDD3-30C5-4863-9EDE-1B69C13DA924}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
