@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
+using VehicleTracking.Models.Devices;
 
 namespace VehicleTracking.Controllers
 {
@@ -7,28 +9,32 @@ namespace VehicleTracking.Controllers
     {
         [HttpPost]
         [Route("api/device")]
-        public virtual JsonResult CreateDevice()
+        [SwaggerOperation("CreateDevice", Tags = new[] { "Devices" })]
+        public virtual JsonResult CreateDevice([FromBody] Device device)
         {
             return new JsonResult(Ok());
         }
 
         [HttpPut]
-        [Route("api/device")]
-        public virtual JsonResult ReplaceDevice(Guid id)
+        [Route("api/device/{deviceId}")]
+        [SwaggerOperation("ReplaceDevice", Tags = new[] { "Devices" })]
+        public virtual JsonResult ReplaceDevice(Guid deviceId, [FromBody] Device device)
         {
             return new JsonResult(Ok());
         }
 
         [HttpPost]
-        [Route("api/device")]
-        public virtual JsonResult UpdateDevice(Guid id)
+        [Route("api/device/update")]
+        [SwaggerOperation("UpdateDevice", Tags = new[] { "Devices" })]
+        public virtual JsonResult UpdateDevice([FromBody] Device device)
         {
             return new JsonResult(Ok());
         }
 
         [HttpGet]
-        [Route("api/device/{id}")]
-        public virtual JsonResult GetDevice()
+        [Route("api/device/{deviceId}")]
+        [SwaggerOperation("GetDevice", Tags = new[] { "Devices" })]
+        public virtual JsonResult GetDevice([FromRoute] string deviceId)
         {
             return new JsonResult(Ok());
         }
