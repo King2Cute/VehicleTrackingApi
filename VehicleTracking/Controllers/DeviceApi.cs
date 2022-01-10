@@ -10,7 +10,7 @@ namespace VehicleTracking.Controllers
         [HttpPost]
         [Route("api/device")]
         [SwaggerOperation("CreateDevice", Tags = new[] { "Devices" })]
-        public virtual JsonResult CreateDevice([FromBody] Device device)
+        public virtual IActionResult CreateDevice([FromBody] Device device)
         {
             return new JsonResult(Ok());
         }
@@ -18,7 +18,7 @@ namespace VehicleTracking.Controllers
         [HttpPut]
         [Route("api/device/{deviceId}")]
         [SwaggerOperation("ReplaceDevice", Tags = new[] { "Devices" })]
-        public virtual JsonResult ReplaceDevice(Guid deviceId, [FromBody] Device device)
+        public virtual IActionResult ReplaceDevice(Guid deviceId, [FromBody] Device device)
         {
             return new JsonResult(Ok());
         }
@@ -26,7 +26,7 @@ namespace VehicleTracking.Controllers
         [HttpPost]
         [Route("api/device/update")]
         [SwaggerOperation("UpdateDevice", Tags = new[] { "Devices" })]
-        public virtual JsonResult UpdateDevice([FromBody] Device device)
+        public virtual IActionResult UpdateDevice([FromBody] Device device)
         {
             return new JsonResult(Ok());
         }
@@ -34,7 +34,7 @@ namespace VehicleTracking.Controllers
         [HttpGet]
         [Route("api/device/{deviceId}")]
         [SwaggerOperation("GetDevice", Tags = new[] { "Devices" })]
-        public virtual JsonResult GetDevice([FromRoute] string deviceId)
+        public virtual IActionResult GetDevice([FromRoute] string deviceId)
         {
             return new JsonResult(Ok());
         }

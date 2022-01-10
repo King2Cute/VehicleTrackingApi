@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VehicleTracking.Core.Persistence
+﻿namespace VehicleTracking.Core.Persistence
 {
     public class ContextOptions
     {

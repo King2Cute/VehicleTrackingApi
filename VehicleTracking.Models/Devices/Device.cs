@@ -7,6 +7,6 @@ namespace VehicleTracking.Models.Devices
 {
     public class Device : Location
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
     }
 }

@@ -9,6 +9,9 @@ namespace VehicleTracking.Core.Persistence
         {
             services.Configure<ContextOptions>(configuration.GetSection(ContextOptions.Section));
 
+            services.AddSingleton<IMongoContext, MongoContext>();
+            services.AddSingleton<typeof(IAsyncRepositoru)>
+
         }
     }
 }
