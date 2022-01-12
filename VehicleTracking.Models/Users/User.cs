@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VehicleTracking.Models.Vehicles;
 
-namespace VehicleTracking.Models.User
+namespace VehicleTracking.Models.Users
 {
     public class User
     {
