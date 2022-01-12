@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using VehicleTracking.Models.Devices;
+using VehicleTracking.Models.VehicleLocations;
 using VehicleTracking.Models.Vehicles;
 
 namespace VehicleTracking.Core.Persistence
@@ -18,11 +19,12 @@ namespace VehicleTracking.Core.Persistence
             var database = client.GetDatabase(config.GetConnectionString("DatabaseName"));
 
             Vehicles = database.GetCollection<Vehicle>("Vehicles");
+            VehicleLocations = database.GetCollection<VehicleLocation>("VehicleLocations");
             Devices = database.GetCollection<Device>("Devices");
         }
 
         public IMongoCollection<Vehicle> Vehicles { get; }
-
+        public IMongoCollection<VehicleLocation> VehicleLocations { get; }
         public IMongoCollection<Device> Devices { get; }
     }
 }

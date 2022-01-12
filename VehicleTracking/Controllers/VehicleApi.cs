@@ -3,10 +3,10 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
-using VehicleTracking.Core.Helpers;
-using VehicleTracking.Core.Persistence;
+using VehicleTracking.Helpers;
 using VehicleTracking.Models;
 using VehicleTracking.Models.Vehicles;
+using VehicleTracking.Core.Persistence;
 
 namespace VehicleTracking.Controllers
 {
@@ -19,16 +19,6 @@ namespace VehicleTracking.Controllers
             _vehicleHelper = new VehicleHelper(_logger, _mongoDbService);
         }
 
-        [HttpPost]
-        [Route("api/vehicle/updateLocation")]
-        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult UpdateVehicleLocation(Guid vehicleId, double lat, double lng)
-        {
-            //database logic
-
-            return new JsonResult(Ok("UpdateVehicleLocation"));
-        }
-
         [HttpGet]
         [Route("api/vehicle/getPosition/{vehicleId}")]
         [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
@@ -38,9 +28,9 @@ namespace VehicleTracking.Controllers
         }
 
         [HttpGet]
-        [Route("api/vehicle/getTimePosition")]
+        [Route("api/vehicle/getTimePosition/{vehicleId}")]
         [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult GetTimeVehiclePosition([FromBody] TimeRange timeRange)
+        public virtual IActionResult GetTimeVehiclePosition([FromRoute] Guid vehicleId, [FromBody] TimeRange timeRange)
         {
             return new JsonResult(Ok());
         }

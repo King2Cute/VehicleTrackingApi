@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using VehicleTracking.Models.Contracts;
 
 namespace VehicleTracking.Models.VehicleLocations
@@ -10,8 +8,7 @@ namespace VehicleTracking.Models.VehicleLocations
     {
         public Guid? Id { get; set; }
         public Guid VehicleId { get; set; }
-        public DateTime Time { get; set; }
-        public Location Location { get; set; }
+        public List<Location> Locations { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -25,8 +22,7 @@ namespace VehicleTracking.Models.VehicleLocations
             return other != null &&
                 EqualityComparer<Guid?>.Default.Equals(Id, other.Id) &&
                 EqualityComparer<Guid?>.Default.Equals(VehicleId, other.VehicleId) &&
-                EqualityComparer<DateTime?>.Default.Equals(Time, other.Time) &&
-                Location == other.Location;
+                Locations == other.Locations;
         }
 
         public override int GetHashCode()
@@ -38,10 +34,8 @@ namespace VehicleTracking.Models.VehicleLocations
                     hashCode = hashCode * 23 + Id.GetHashCode();
                 if (VehicleId != null)
                     hashCode = hashCode * 23 + VehicleId.GetHashCode();
-                if (Time != null)
-                    hashCode = hashCode * 23 + Time.GetHashCode();
-                if (Location != null)
-                    hashCode = hashCode * 23 + Location.GetHashCode();
+                if (Locations != null)
+                    hashCode = hashCode * 23 + Locations.GetHashCode();
                 return hashCode;
             }
         }
