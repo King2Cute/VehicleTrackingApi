@@ -10,14 +10,15 @@ namespace VehicleTracking.Core.Helpers
 {
     public class VehicleHelper
     {
-        public VehicleHelper(ILogger<Vehicle> logger)
+        public VehicleHelper(ILogger<Vehicle> logger, MongoDbService mongoDbService)
         {
             _logger = logger;
+            _mongoDbService = mongoDbService;
         }
 
         public async Task<Guid?> CreateVehicle(Vehicle vehicle)
         {
-            if (vehicle.Id.HasValue)
+            if (!vehicle.Id.HasValue)
                 vehicle.Id = Guid.NewGuid();
 
             try

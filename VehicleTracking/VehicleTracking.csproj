@@ -9,5 +9,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VehicleTracking.Core\VehicleTracking.Core.csproj" />
+    <ProjectReference Include="..\VehicleTracking.Models\VehicleTracking.Models.csproj" />
+  </ItemGroup>
+
 
 </Project>

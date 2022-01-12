@@ -4,6 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 using VehicleTracking.Core.Helpers;
+using VehicleTracking.Core.Persistence;
 using VehicleTracking.Models;
 using VehicleTracking.Models.Vehicles;
 
@@ -11,10 +12,11 @@ namespace VehicleTracking.Controllers
 {
     public class VehicleApi : Controller
     {
-        public VehicleApi(ILogger<Vehicle> logger)
+        public VehicleApi(ILogger<Vehicle> logger, MongoDbService mongoDbService)
         {
             _logger = logger;
-            _vehicleHelper = new VehicleHelper(_logger);
+            _mongoDbService = mongoDbService;
+            _vehicleHelper = new VehicleHelper(_logger, _mongoDbService);
         }
 
         [HttpPost]
@@ -50,7 +52,7 @@ namespace VehicleTracking.Controllers
         public async virtual Task<IActionResult> CreateVehicle([FromBody] Vehicle vehicle)
         {
             //register vehicle
-            var vehicleId = await _vehicleHelper.CreateVehicle(vehicle);
+            var vehicleId = await _vehicleHelper.CreateVehicle(vehicle); 
 
             if (vehicleId == null)
                 return BadRequest("error saving vehicle");
@@ -106,5 +108,6 @@ namespace VehicleTracking.Controllers
 
         private readonly ILogger<Vehicle> _logger;
         private readonly VehicleHelper _vehicleHelper;
+        private readonly MongoDbService _mongoDbService;
     }
 }

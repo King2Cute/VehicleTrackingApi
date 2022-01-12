@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VehicleTracking.Core.Persistence
 {
-    interface IMongoContext
+    public interface IMongoContext : IDisposable
     {
         void AddCommand(Func<Task> func);
         IMongoCollection<T> GetCollection<T>(string name);

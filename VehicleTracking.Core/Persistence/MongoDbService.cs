@@ -11,7 +11,10 @@ namespace VehicleTracking.Core.Persistence
     {
         public MongoDbService(IConfiguration config)
         {
-            var client = new MongoClient(config.GetConnectionString("MongoConnection"));
+            var settings = MongoClientSettings.FromConnectionString(config.GetConnectionString("MongoConnection"));
+            settings.AllowInsecureTls = true;
+
+            var client = new MongoClient(settings);
             var database = client.GetDatabase(config.GetConnectionString("DatabaseName"));
 
             Vehicles = database.GetCollection<Vehicle>("Vehicles");
