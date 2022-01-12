@@ -5,7 +5,7 @@ using VehicleTracking.Models.Contracts;
 
 namespace VehicleTracking.Models.VehicleLocations
 {
-    public interface IVehicleLocation : IAsyncRepository<VehicleLocation>
+    public interface IVehicleLocationRepository : IAsyncRepository<VehicleLocation>
     {
 
     }
