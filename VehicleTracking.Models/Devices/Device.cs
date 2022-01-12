@@ -7,7 +7,7 @@ using VehicleTracking.Models.Contracts;
 
 namespace VehicleTracking.Models.Devices
 {
-    public class Device : Location, IEquatable<Device>, IEntity
+    public class Device : IEquatable<Device>, IEntity
     {
         public Guid? Id { get; set; }
 
@@ -23,6 +23,17 @@ namespace VehicleTracking.Models.Devices
         {
             return other != null &&
                 EqualityComparer<Guid?>.Default.Equals(Id, other.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 17;
+                if (Id != null)
+                    hashCode = hashCode * 23 + Id.GetHashCode();
+                return hashCode;
+            }
         }
 
         public static bool operator ==(Device left, Device right)
