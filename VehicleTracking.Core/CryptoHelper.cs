@@ -23,7 +23,6 @@ namespace VehicleTracking.Core
             Array.Copy(hash, 0, hashedBytes, 16, 20);
             return Convert.ToBase64String(hashedBytes);
         }
-
         public bool CheckPassword(string savedHash, string inputedPassword)
         {
             byte[] hashBytes = Convert.FromBase64String(savedHash);

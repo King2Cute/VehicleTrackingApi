@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -11,12 +13,13 @@ namespace VehicleTracking.Controllers
 {
     public class UserController : Controller
     {
-        public UserController(ILogger<User> logger, MongoDbService mongoDbService)
+        public UserController(IConfiguration config, ILogger<User> logger, MongoDbService mongoDbService)
         {
+            _config = config;
             _logger = logger;
             _mongoDbService = mongoDbService;
             _cryptoHelper = new CryptoHelper();
-            _userHelper = new UserHelper(_logger, _mongoDbService, _cryptoHelper);
+            _userHelper = new UserHelper(_config, _logger, _mongoDbService, _cryptoHelper);
         }
 
         [HttpGet]
@@ -26,6 +29,7 @@ namespace VehicleTracking.Controllers
             return Ok(_userHelper.GetUsers());
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("api/user")]
         public async virtual Task<IActionResult> CreateUser(User user)
@@ -38,6 +42,7 @@ namespace VehicleTracking.Controllers
             return Ok(userId);
         }
 
+        [Authorize]
         [HttpGet]
         [Route("api/user/{id}")]
         public virtual IActionResult GetUser(Guid id)
@@ -58,6 +63,7 @@ namespace VehicleTracking.Controllers
             }
         }
 
+        private readonly IConfiguration _config;
         private readonly ILogger<User> _logger;
         private readonly UserHelper _userHelper;
         private readonly CryptoHelper _cryptoHelper;
