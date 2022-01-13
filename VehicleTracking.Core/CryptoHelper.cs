@@ -36,12 +36,10 @@ namespace VehicleTracking.Core
             for (int i = 0; i < 20; i++)
             {
                 if (hashBytes[i + 16] != hash[i])
-                    return false;
-                else
-                    return true;
+                    return false;               
             }
 
-            return false;
+            return true;
         }
     }
 }

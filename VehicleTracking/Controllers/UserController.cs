@@ -31,7 +31,7 @@ namespace VehicleTracking.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("api/user")]
+        [Route("api/user/create")]
         public async virtual Task<IActionResult> CreateUser(User user)
         {
             var userId = await _userHelper.CreateUser(user);
@@ -61,6 +61,19 @@ namespace VehicleTracking.Controllers
                 _logger.LogError(e, "Error getting user");
                 return StatusCode(400, e.Message);
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("api/user/auth")]
+        public virtual IActionResult Login([FromBody] User user)
+        {
+            var token = _userHelper.Authenticate(user.Email, user.Password);
+
+            if (token == null)
+                return Unauthorized();
+
+            return Ok(new { token, user });
         }
 
         private readonly IConfiguration _config;

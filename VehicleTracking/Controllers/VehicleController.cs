@@ -49,25 +49,11 @@ namespace VehicleTracking.Controllers
             return Ok(vehicleId);
         }
 
-        [HttpPut]
-        [Route("api/vehicle/{vehicleId}")]
-        [SwaggerOperation("ReplaceVehicle", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult ReplaceVehicle([FromRoute] Guid vehicleId, [FromBody] Vehicle vehicle)
-        {
-            //register vehicle
-
-            //register initial location
-
-            return new JsonResult(Ok());
-        }
-
         [HttpPost]
         [Route("api/vehicle/update")]
         [SwaggerOperation("UpdateVehicle", Tags = new[] { "Vehicles" })]
         public virtual IActionResult UpdateVehicle([FromRoute] Guid vehicleId)
         {
-            
-
             return new JsonResult(Ok());
         }
 
