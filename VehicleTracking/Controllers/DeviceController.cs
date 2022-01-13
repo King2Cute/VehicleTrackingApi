@@ -2,19 +2,34 @@
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Threading.Tasks;
 using VehicleTracking.Core.Persistence;
 using VehicleTracking.Helpers;
 using VehicleTracking.Models.Devices;
+using VehicleTracking.Models.VehicleLocations;
 
 namespace VehicleTracking.Controllers
 {
-    public class DeviceApi : Controller
+    public class DeviceController : Controller
     {
-        public DeviceApi(ILogger<Device> logger, MongoDbService mongoDbService)
+        public DeviceController(ILogger<Device> logger, MongoDbService mongoDbService)
         {
             _logger = logger;
             _mongoDbService = mongoDbService;
             _deviceHelper = new DeviceHelper(_logger, _mongoDbService);
+        }
+
+        [HttpPost]
+        [Route("api/vehicle/updateLocation")]
+        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
+        public async virtual Task<IActionResult> UpdateVehicleLocation(VehicleLocation vehicleLocation)
+        {
+            var vehicleLocationId = await _deviceHelper.CreateVehicleLocation(vehicleLocation);
+
+            if (vehicleLocationId == null)
+                return BadRequest("error saving vehicle location");
+
+            return Ok(vehicleLocationId);
         }
 
         [HttpPost]

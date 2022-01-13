@@ -26,6 +26,21 @@ namespace VehicleTracking.Models.Vehicles
                 EqualityComparer<VehicleType>.Default.Equals(VehicleType, other.VehicleType);
         }
 
+        public override int GetHashCode()
+        {
+           unchecked
+            {
+                var hashCode = 17;
+                if (Id != null)
+                    hashCode = hashCode * 23 + Id.GetHashCode();
+                if (Registration != null)
+                    hashCode = hashCode * 23 + Registration.GetHashCode();
+                if (VehicleType != null)
+                    hashCode = hashCode * 23 + VehicleType.GetHashCode();
+                return hashCode;
+            }
+        }
+
         public static bool operator ==(Vehicle left, Vehicle right)
         {
             return EqualityComparer<Vehicle>.Default.Equals(left, right);

@@ -3,30 +3,20 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
-using VehicleTracking.Core.Helpers;
-using VehicleTracking.Core.Persistence;
+using VehicleTracking.Helpers;
 using VehicleTracking.Models;
 using VehicleTracking.Models.Vehicles;
+using VehicleTracking.Core.Persistence;
 
 namespace VehicleTracking.Controllers
 {
-    public class VehicleApi : Controller
+    public class VehicleController : Controller
     {
-        public VehicleApi(ILogger<Vehicle> logger, MongoDbService mongoDbService)
+        public VehicleController(ILogger<Vehicle> logger, MongoDbService mongoDbService)
         {
             _logger = logger;
             _mongoDbService = mongoDbService;
             _vehicleHelper = new VehicleHelper(_logger, _mongoDbService);
-        }
-
-        [HttpPost]
-        [Route("api/vehicle/updateLocation")]
-        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult UpdateVehicleLocation(Guid vehicleId, double lat, double lng)
-        {
-            //database logic
-
-            return new JsonResult(Ok("UpdateVehicleLocation"));
         }
 
         [HttpGet]
@@ -38,9 +28,9 @@ namespace VehicleTracking.Controllers
         }
 
         [HttpGet]
-        [Route("api/vehicle/getTimePosition")]
+        [Route("api/vehicle/getTimePosition/{vehicleId}")]
         [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult GetTimeVehiclePosition([FromBody] TimeRange timeRange)
+        public virtual IActionResult GetTimeVehiclePosition([FromRoute] Guid vehicleId, [FromBody] TimeRange timeRange)
         {
             return new JsonResult(Ok());
         }
@@ -51,7 +41,6 @@ namespace VehicleTracking.Controllers
         [SwaggerOperation("CreateVehicle", Tags = new[] { "Vehicles" })]
         public async virtual Task<IActionResult> CreateVehicle([FromBody] Vehicle vehicle)
         {
-            //register vehicle
             var vehicleId = await _vehicleHelper.CreateVehicle(vehicle); 
 
             if (vehicleId == null)
@@ -77,9 +66,7 @@ namespace VehicleTracking.Controllers
         [SwaggerOperation("UpdateVehicle", Tags = new[] { "Vehicles" })]
         public virtual IActionResult UpdateVehicle([FromRoute] Guid vehicleId)
         {
-            //register vehicle
-
-            //register initial location
+            
 
             return new JsonResult(Ok());
         }
