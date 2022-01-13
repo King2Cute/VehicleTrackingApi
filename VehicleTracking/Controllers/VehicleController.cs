@@ -10,9 +10,9 @@ using VehicleTracking.Core.Persistence;
 
 namespace VehicleTracking.Controllers
 {
-    public class VehicleApi : Controller
+    public class VehicleController : Controller
     {
-        public VehicleApi(ILogger<Vehicle> logger, MongoDbService mongoDbService)
+        public VehicleController(ILogger<Vehicle> logger, MongoDbService mongoDbService)
         {
             _logger = logger;
             _mongoDbService = mongoDbService;
@@ -41,7 +41,6 @@ namespace VehicleTracking.Controllers
         [SwaggerOperation("CreateVehicle", Tags = new[] { "Vehicles" })]
         public async virtual Task<IActionResult> CreateVehicle([FromBody] Vehicle vehicle)
         {
-            //register vehicle
             var vehicleId = await _vehicleHelper.CreateVehicle(vehicle); 
 
             if (vehicleId == null)
@@ -67,9 +66,7 @@ namespace VehicleTracking.Controllers
         [SwaggerOperation("UpdateVehicle", Tags = new[] { "Vehicles" })]
         public virtual IActionResult UpdateVehicle([FromRoute] Guid vehicleId)
         {
-            //register vehicle
-
-            //register initial location
+            
 
             return new JsonResult(Ok());
         }

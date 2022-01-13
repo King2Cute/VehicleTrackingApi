@@ -10,9 +10,9 @@ using VehicleTracking.Models.VehicleLocations;
 
 namespace VehicleTracking.Controllers
 {
-    public class DeviceApi : Controller
+    public class DeviceController : Controller
     {
-        public DeviceApi(ILogger<Device> logger, MongoDbService mongoDbService)
+        public DeviceController(ILogger<Device> logger, MongoDbService mongoDbService)
         {
             _logger = logger;
             _mongoDbService = mongoDbService;

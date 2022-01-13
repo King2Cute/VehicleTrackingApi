@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using VehicleTracking.Core.Persistence.Repositories;
 using VehicleTracking.Models.Contracts;
+using VehicleTracking.Models.Users;
 using VehicleTracking.Models.VehicleLocations;
 using VehicleTracking.Models.Vehicles;
 
@@ -25,6 +26,7 @@ namespace VehicleTracking.Core.Persistence
 
         private static void RegisterRepositories(IServiceCollection services)
         {
+            services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IVehicleRepository, VehicleRepository>();
             services.AddSingleton<IVehicleLocationRepository, VehicleLocationRepository>();
             services.AddSingleton<IDeviceRepository, DeviceRepository>();

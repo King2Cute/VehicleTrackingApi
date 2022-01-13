@@ -18,7 +18,6 @@ namespace VehicleTracking.Models.Devices
             return obj.GetType() == GetType() && Equals((Device)obj);
         }
 
-
         public bool Equals(Device other)
         {
             return other != null &&
