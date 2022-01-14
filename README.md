@@ -25,8 +25,8 @@ How to run solution
 }
 ```
 5. In the top right of swagger use the Authorize to insert the JWT token taken from Step 4 or pass this token to your api software e.g postman as a bearer token
-6. Once authenticated call https://localhost:5001/api/device/{userId} replacing {userId} with the Id taken from Step 3 to create a Device.
-7. Device would call https://localhost:5001/api/device/createVehicle with body example below
+6. Once authenticated call https://localhost:5001/api/device/{userId} replacing {userId} with the Id taken from Step 3 to create a Device and returning deviceId
+7. Device would call https://localhost:5001/api/device/createVehicle with body example below returning vehicleId
 ```json
 {
   "vehicle": {
@@ -49,7 +49,7 @@ How to run solution
   }
 }
  ```
- 8. Once vehicle is created device would update vehicle using https://localhost:5001/api/device/updateLocation with body example of
+ 8. Once vehicle is created device would update vehicle using https://localhost:5001/api/device/updateLocation with body below using deviceId and vehicleId from steps 6 and 7
 ```json
 {
   "vehicleId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
