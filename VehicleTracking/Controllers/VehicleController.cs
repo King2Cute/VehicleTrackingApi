@@ -7,6 +7,7 @@ using VehicleTracking.Helpers;
 using VehicleTracking.Models;
 using VehicleTracking.Models.Vehicles;
 using VehicleTracking.Core.Persistence;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VehicleTracking.Controllers
 {
@@ -19,34 +20,46 @@ namespace VehicleTracking.Controllers
             _vehicleHelper = new VehicleHelper(_logger, _mongoDbService);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("api/vehicle/getPosition/{vehicleId}")]
-        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
+        [SwaggerOperation("GetVehiclePosition", Tags = new[] { "Vehicles" })]
         public virtual IActionResult GetVehiclePosition([FromRoute] Guid vehicleId)
         {
-            return new JsonResult(Ok("GetVehiclePosition"));
+            try
+            {
+                var vehiclePosition = _vehicleHelper.GetVehiclePosition(vehicleId);
+                if (vehiclePosition == null)
+                    return BadRequest("can't find vehicle position");
+
+                return Ok(vehiclePosition);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("error getting vehicle position");
+                return BadRequest(e.Message);
+            }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("api/vehicle/getTimePosition/{vehicleId}")]
         [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
         public virtual IActionResult GetTimeVehiclePosition([FromRoute] Guid vehicleId, [FromBody] TimeRange timeRange)
         {
-            return new JsonResult(Ok());
-        }
+            try
+            {
+                var vehicleRange = _vehicleHelper.GetVehiclePositionsFromRange(vehicleId, timeRange);
+                if (vehicleRange == null)
+                    return BadRequest("vehicle range is null");
 
-        //add auth
-        [HttpPost]
-        [Route("api/vehicle")]
-        [SwaggerOperation("CreateVehicle", Tags = new[] { "Vehicles" })]
-        public async virtual Task<IActionResult> CreateVehicle([FromBody] Vehicle vehicle)
-        {
-            var vehicleId = await _vehicleHelper.CreateVehicle(vehicle); 
-
-            if (vehicleId == null)
-                return BadRequest("error saving vehicle");
-
-            return Ok(vehicleId);
+                return Ok(vehicleRange);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("error getting vehicle range");
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]

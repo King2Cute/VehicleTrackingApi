@@ -62,13 +62,17 @@ namespace VehicleTracking.Helpers
         {
             var now = DateTime.Now;
             var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.Id.Value == vehicleId).First();
+
+            if (vehicleLocation == null)
+                return null;
+
             var times = GetLocationTimes(vehicleLocation.Locations);
             var min = now.GetMinTime(times);
 
             return vehicleLocation.Locations.Where(x => x.Time == min).First();
         }
 
-        public List<Location> GetVehiclePositionsFromRange(Guid vehicleId, DateTime startTime, DateTime endTime)
+        public List<Location> GetVehiclePositionsFromRange(Guid vehicleId, TimeRange timeRange)
         {
             var now = DateTime.Now;
             List<Location> locationInRange = new List<Location>();
@@ -78,7 +82,7 @@ namespace VehicleTracking.Helpers
                 var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.Id.Value == vehicleId).First();
                 foreach (var location in vehicleLocation.Locations)
                 {
-                    if (location.Time >= startTime && location.Time <= endTime)
+                    if (location.Time >= timeRange.StartTime && location.Time <= timeRange.EndTime)
                     {
                         locationInRange.Add(location);
                     }

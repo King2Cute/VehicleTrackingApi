@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 using VehicleTracking.Core;
@@ -22,8 +23,10 @@ namespace VehicleTracking.Controllers
             _userHelper = new UserHelper(_config, _logger, _mongoDbService, _cryptoHelper);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("api/user")]
+        [SwaggerOperation("GetUsers", Tags = new[] { "Users" })]
         public virtual IActionResult GetUsers()
         {
             return Ok(_userHelper.GetUsers());
@@ -32,7 +35,8 @@ namespace VehicleTracking.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("api/user/create")]
-        public async virtual Task<IActionResult> CreateUser(User user)
+        [SwaggerOperation("CreateUser", Tags = new[] { "Users" })]
+        public async virtual Task<IActionResult> CreateUser([FromBody] User user)
         {
             var userId = await _userHelper.CreateUser(user);
 
@@ -42,9 +46,10 @@ namespace VehicleTracking.Controllers
             return Ok(userId);
         }
 
-        [Authorize]
+        [Authorize(Roles = "User")]
         [HttpGet]
         [Route("api/user/{id}")]
+        [SwaggerOperation("GetUser", Tags = new[] { "Users" })]
         public virtual IActionResult GetUser(Guid id)
         {
             try
@@ -66,6 +71,7 @@ namespace VehicleTracking.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("api/user/auth")]
+        [SwaggerOperation("Login", Tags = new[] { "Users" })]
         public virtual IActionResult Login([FromBody] User user)
         {
             var token = _userHelper.Authenticate(user.Email, user.Password);

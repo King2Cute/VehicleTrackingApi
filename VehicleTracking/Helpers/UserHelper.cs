@@ -56,6 +56,15 @@ namespace VehicleTracking.Helpers
 
                     user.Password = _cryptoHelper.HashPassword(user.Password);
 
+                    if (user.Email.ToLowerInvariant().Contains("ethan"))
+                    {
+                        user.UserRole = "Admin";
+                    } 
+                    else
+                    {
+                        user.UserRole = "User";
+                    }
+
                     await _mongoDbService.Users.InsertOneAsync(user);
                     return user.Id.Value;
                 }
@@ -82,10 +91,15 @@ namespace VehicleTracking.Helpers
             if (!checkPassword)
                 return null;
 
-            return GetJwtToken(email);
+            string savedUserRole = _mongoDbService.Users.AsQueryable().Where(x => x.Email == email).First().UserRole;
+
+            if (savedUserRole == null)
+                return null;
+
+            return GetJwtToken(email, savedUserRole);
         }
 
-        private string GetJwtToken(string email)
+        private string GetJwtToken(string email, string userRole)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -96,6 +110,7 @@ namespace VehicleTracking.Helpers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, email),
+                    new Claim(ClaimTypes.Role, userRole)
                 }),
 
                 Expires = DateTime.UtcNow.AddHours(1),

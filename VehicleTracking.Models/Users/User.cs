@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using VehicleTracking.Models.Contracts;
 using VehicleTracking.Models.Vehicles;
@@ -10,9 +12,12 @@ namespace VehicleTracking.Models.Users
 {
     public class User : IEquatable<User>, IEntity
     {
+        [JsonIgnore]
         public Guid? Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        [JsonIgnore]
+        public string UserRole { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -26,7 +31,8 @@ namespace VehicleTracking.Models.Users
             return other != null &&
                 EqualityComparer<Guid?>.Default.Equals(Id, other.Id) &&
                 Email == other.Email &&
-                Password == other.Password;
+                Password == other.Password &&
+                UserRole == other.UserRole; ;
         }
 
         public override int GetHashCode()
@@ -40,6 +46,8 @@ namespace VehicleTracking.Models.Users
                     hashCode = hashCode * 23 + Email.GetHashCode();
                 if (Password != null)
                     hashCode = hashCode * 23 + Password.GetHashCode();
+                if (UserRole != null)
+                    hashCode = hashCode * 23 + UserRole.GetHashCode();
                 return hashCode;
             }
         }
