@@ -42,14 +42,14 @@ namespace VehicleTracking.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("api/vehicle/getTimePosition/{vehicleId}")]
+        [HttpPost]
+        [Route("api/vehicle/getTimePosition")]
         [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult GetTimeVehiclePosition([FromRoute] Guid vehicleId, [FromBody] TimeRange timeRange)
+        public virtual IActionResult GetTimeVehiclePosition([FromBody] VehicleRangeRequest timeRange)
         {
             try
             {
-                var vehicleRange = _vehicleHelper.GetVehiclePositionsFromRange(vehicleId, timeRange);
+                var vehicleRange = _vehicleHelper.GetVehiclePositionsFromRange(timeRange);
                 if (vehicleRange == null)
                     return BadRequest("vehicle range is null");
 

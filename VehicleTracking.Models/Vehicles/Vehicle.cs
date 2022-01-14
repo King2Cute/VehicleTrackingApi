@@ -8,9 +8,8 @@ namespace VehicleTracking.Models.Vehicles
 {
     public class Vehicle : IEquatable<Vehicle>, IEntity
     {
-        [IgnoreDataMember]
+        [JsonIgnore]
         public Guid? Id { get; set; }
-        [IgnoreDataMember]
         public Guid? DeviceId { get; set; }
         public string Registration { get; set; }
         public VehicleStats VehicleStats { get; set; }

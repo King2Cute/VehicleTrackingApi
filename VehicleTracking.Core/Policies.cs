@@ -12,12 +12,12 @@ namespace VehicleTracking.Core
 
         public static AuthorizationPolicy AdminPolicy()
         {
-            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole(Admin).Build();
+            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireClaim(Admin).Build();
         }
 
         public static AuthorizationPolicy UserPolicy()
         {
-            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole(User).Build();
+            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireClaim(User).Build();
         }
     }
 }

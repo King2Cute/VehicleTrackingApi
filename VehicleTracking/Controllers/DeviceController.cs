@@ -24,14 +24,14 @@ namespace VehicleTracking.Controllers
         }
 
         [HttpPost]
-        [Route("api/device/updateLocation/{vehicleId}")]
+        [Route("api/device/updateLocation")]
         [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Devices" })]
         public virtual IActionResult UpdateVehicleLocation([FromBody] LocationUpdateRequest locationUpdate)
         {
             bool vehicleUpdated = _deviceHelper.UpdateVehicleLocation(locationUpdate);
 
             if (!vehicleUpdated)
-                return BadRequest("error updating vehicle location");
+                return BadRequest();
 
 
             return Ok("vehicle location updated for vehicle ID: " + locationUpdate.VehicleId);
@@ -39,7 +39,7 @@ namespace VehicleTracking.Controllers
 
         //assuming the device is the one needing to do the initial creation of vehicle and position
         [HttpPost]
-        [Route("api/device/createVehicle/")]
+        [Route("api/device/createVehicle")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerOperation("CreateVehicle", Tags = new[] { "Devices" })]

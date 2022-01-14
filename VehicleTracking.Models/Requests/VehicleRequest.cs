@@ -8,7 +8,6 @@ namespace VehicleTracking.Models.Requests
 {
     public class VehicleRequest
     {
-        public Guid DeviceId { get; set; }
         public Vehicle Vehicle { get; set; }
         public VehicleLocation VehicleLocation { get; set; }
     }

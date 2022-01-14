@@ -22,6 +22,9 @@ namespace VehicleTracking.Helpers
 
         public async Task<Guid?> CreateVehicle(VehicleRequest vehicleRequest)
         {
+            if (vehicleRequest.Vehicle.DeviceId == Guid.Empty || vehicleRequest.Vehicle.DeviceId == null)
+                return null;
+
             if (!vehicleRequest.Vehicle.Id.HasValue)
                 vehicleRequest.Vehicle.Id = Guid.NewGuid();
 
@@ -29,7 +32,6 @@ namespace VehicleTracking.Helpers
                 vehicleRequest.VehicleLocation.Id = Guid.NewGuid();
 
             vehicleRequest.VehicleLocation.VehicleId = vehicleRequest.Vehicle.Id.Value;
-            vehicleRequest.Vehicle.DeviceId = vehicleRequest.DeviceId;
 
             try
             {
@@ -55,22 +57,22 @@ namespace VehicleTracking.Helpers
 
         public bool UpdateVehicleLocation(LocationUpdateRequest locationUpdate)
         {
-            var vehicle = _mongoDbService.Vehicles.AsQueryable().Where(v => v.Id == locationUpdate.VehicleId).First();
-
-            if (vehicle.DeviceId != locationUpdate.DeviceId)
-                throw new UnauthorizedAccessException();
-
-            var vehicleLocations = _mongoDbService.VehicleLocations.AsQueryable().Where(v => v.VehicleId == locationUpdate.VehicleId).First().Locations;
-
-            if (vehicleLocations == null)
-                return false;
-
             try
             {
-                vehicleLocations.Add(locationUpdate.Location);
+                var vehicle = _mongoDbService.Vehicles.AsQueryable().Where(v => v.Id == locationUpdate.VehicleId).FirstOrDefault();
 
-                var filter = Builders<VehicleLocation>.Filter.Eq("_id", locationUpdate.VehicleId);
-                var update = Builders<VehicleLocation>.Update.Set("Locations", vehicleLocations);
+                if (vehicle.DeviceId != locationUpdate.DeviceId)
+                    throw new UnauthorizedAccessException();
+
+                var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(v => v.VehicleId == locationUpdate.VehicleId).FirstOrDefault();
+
+                if (vehicleLocation == null)
+                    return false;
+
+                vehicleLocation.Locations.Add(locationUpdate.Location);
+
+                var filter = Builders<VehicleLocation>.Filter.Eq("_id", vehicleLocation.Id);
+                var update = Builders<VehicleLocation>.Update.Set("Locations", vehicleLocation.Locations);
                 var result = _mongoDbService.VehicleLocations.UpdateOne(filter, update);
 
                 return result.MatchedCount == 1 ? true : false;

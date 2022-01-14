@@ -17,7 +17,7 @@ namespace VehicleTracking.Models.Users
         public string Email { get; set; }
         public string Password { get; set; }
         [JsonIgnore]
-        public string UserRole { get; set; }
+        public List<string> UserRoles { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -32,7 +32,7 @@ namespace VehicleTracking.Models.Users
                 EqualityComparer<Guid?>.Default.Equals(Id, other.Id) &&
                 Email == other.Email &&
                 Password == other.Password &&
-                UserRole == other.UserRole; ;
+                UserRoles == other.UserRoles;
         }
 
         public override int GetHashCode()
@@ -46,8 +46,8 @@ namespace VehicleTracking.Models.Users
                     hashCode = hashCode * 23 + Email.GetHashCode();
                 if (Password != null)
                     hashCode = hashCode * 23 + Password.GetHashCode();
-                if (UserRole != null)
-                    hashCode = hashCode * 23 + UserRole.GetHashCode();
+                if (UserRoles != null)
+                    hashCode = hashCode * 23 + UserRoles.GetHashCode();
                 return hashCode;
             }
         }

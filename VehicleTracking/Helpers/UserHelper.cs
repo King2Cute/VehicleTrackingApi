@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -56,16 +57,9 @@ namespace VehicleTracking.Helpers
 
                     user.Password = _cryptoHelper.HashPassword(user.Password);
 
-                    if (user.Email.ToLowerInvariant().Contains("ethan"))
-                    {
-                        user.UserRole = "Admin";
-                    } 
-                    else
-                    {
-                        user.UserRole = "User";
-                    }
+                    var updatedUser = SetRoles(user);
 
-                    await _mongoDbService.Users.InsertOneAsync(user);
+                    await _mongoDbService.Users.InsertOneAsync(updatedUser);
                     return user.Id.Value;
                 }
 
@@ -81,39 +75,75 @@ namespace VehicleTracking.Helpers
 
         public string Authenticate(string email, string password)
         {
-            string savedHashPassword = _mongoDbService.Users.AsQueryable().Where(x => x.Email == email).First().Password;
+            try
+            {
+                User user = _mongoDbService.Users.AsQueryable().Where(x => x.Email == email).First();
 
-            if (savedHashPassword == null)
+                if (user == null)
+                    return null;
+
+                bool checkPassword = _cryptoHelper.CheckPassword(user.Password, password);
+
+                if (!checkPassword)
+                    return null;
+
+                List<string> savedUserRoles = _mongoDbService.Users.AsQueryable().Where(x => x.Email == email).First().UserRoles;
+
+                if (savedUserRoles == null)
+                    return null;
+
+                return GetJwtToken((Guid)user.Id, savedUserRoles);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
                 return null;
-
-            bool checkPassword = _cryptoHelper.CheckPassword(savedHashPassword, password);
-
-            if (!checkPassword)
-                return null;
-
-            string savedUserRole = _mongoDbService.Users.AsQueryable().Where(x => x.Email == email).First().UserRole;
-
-            if (savedUserRole == null)
-                return null;
-
-            return GetJwtToken(email, savedUserRole);
+            }
         }
 
-        private string GetJwtToken(string email, string userRole)
+        private User SetRoles(User user)
+        {
+            var userRoles = new List<string>();
+
+            if (user.Email.ToLowerInvariant().Contains("admin"))
+            {
+                userRoles.Add("Admin");
+                userRoles.Add("User");
+            } else
+            {
+                userRoles.Add("User");
+            }
+
+            user.UserRoles = userRoles;
+
+            return user;
+        }
+
+        private string GetJwtToken(Guid userId, List<string> userRoles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var tokenKey = Encoding.ASCII.GetBytes(key);
 
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, Convert.ToString(userId)));
+
+            foreach(var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+
             var tokenDesc = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, userRole)
-                }),
+                Subject = new ClaimsIdentity(claims),
 
                 Expires = DateTime.UtcNow.AddHours(1),
+
+                Issuer = "https://localhost:5001/",
+
+                IssuedAt = DateTime.Now,
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),
