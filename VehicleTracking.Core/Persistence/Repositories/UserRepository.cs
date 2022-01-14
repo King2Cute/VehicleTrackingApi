@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using VehicleTracking.Models.Users;
+﻿using VehicleTracking.Models.Users;
 
 namespace VehicleTracking.Core.Persistence.Repositories
 {
