@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleTracking.Core", "Veh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleTracking.Models", "VehicleTracking.Models\VehicleTracking.Models.csproj", "{EE81404A-618D-4779-A697-8362730E95AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTracking.Tests", "VehicleTracking.Tests\VehicleTracking.Tests.csproj", "{97595366-6655-4DA2-B587-8E1310BDEB99}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{EE81404A-618D-4779-A697-8362730E95AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE81404A-618D-4779-A697-8362730E95AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE81404A-618D-4779-A697-8362730E95AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97595366-6655-4DA2-B587-8E1310BDEB99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97595366-6655-4DA2-B587-8E1310BDEB99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97595366-6655-4DA2-B587-8E1310BDEB99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97595366-6655-4DA2-B587-8E1310BDEB99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
