@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using VehicleTracking.Models.Contracts;
 
@@ -9,7 +11,10 @@ namespace VehicleTracking.Models.Devices
 {
     public class Device : IEquatable<Device>, IEntity
     {
+        [IgnoreDataMember]
         public Guid? Id { get; set; }
+        public bool Online { get; set; }
+        public DateTime CreationDate { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -21,7 +26,9 @@ namespace VehicleTracking.Models.Devices
         public bool Equals(Device other)
         {
             return other != null &&
-                EqualityComparer<Guid?>.Default.Equals(Id, other.Id);
+                EqualityComparer<Guid?>.Default.Equals(Id, other.Id) &&
+                Online == other.Online &&
+                EqualityComparer<DateTime>.Default.Equals(CreationDate, other.CreationDate);
         }
 
         public override int GetHashCode()
@@ -31,6 +38,8 @@ namespace VehicleTracking.Models.Devices
                 var hashCode = 17;
                 if (Id != null)
                     hashCode = hashCode * 23 + Id.GetHashCode();
+                if (CreationDate != null)
+                    hashCode = hashCode * 23 + CreationDate.GetHashCode();
                 return hashCode;
             }
         }

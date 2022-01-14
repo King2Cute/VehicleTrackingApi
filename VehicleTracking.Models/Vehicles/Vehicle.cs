@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using VehicleTracking.Models.Contracts;
 
 namespace VehicleTracking.Models.Vehicles
 {
     public class Vehicle : IEquatable<Vehicle>, IEntity
     {
+        [JsonIgnore]
         public Guid? Id { get; set; }
+        public Guid? DeviceId { get; set; }
         public string Registration { get; set; }
-        public VehicleType VehicleType { get; set; }
+        public VehicleStats VehicleStats { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -22,8 +25,9 @@ namespace VehicleTracking.Models.Vehicles
         {
             return other != null &&
                 EqualityComparer<Guid?>.Default.Equals(Id, other.Id) &&
+                EqualityComparer<Guid?>.Default.Equals(DeviceId, other.DeviceId) &&
                 Registration == other.Registration &&
-                EqualityComparer<VehicleType>.Default.Equals(VehicleType, other.VehicleType);
+                EqualityComparer<VehicleStats>.Default.Equals(VehicleStats, other.VehicleStats);
         }
 
         public override int GetHashCode()
@@ -33,10 +37,12 @@ namespace VehicleTracking.Models.Vehicles
                 var hashCode = 17;
                 if (Id != null)
                     hashCode = hashCode * 23 + Id.GetHashCode();
+                if (DeviceId != null)
+                    hashCode = hashCode * 23 + DeviceId.GetHashCode();
                 if (Registration != null)
                     hashCode = hashCode * 23 + Registration.GetHashCode();
-                if (VehicleType != null)
-                    hashCode = hashCode * 23 + VehicleType.GetHashCode();
+                if (VehicleStats != null)
+                    hashCode = hashCode * 23 + VehicleStats.GetHashCode();
                 return hashCode;
             }
         }

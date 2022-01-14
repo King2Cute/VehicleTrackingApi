@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 using VehicleTracking.Core.Persistence;
 using VehicleTracking.Helpers;
+using VehicleTracking.Models;
 using VehicleTracking.Models.Devices;
+using VehicleTracking.Models.Requests;
 using VehicleTracking.Models.VehicleLocations;
+using VehicleTracking.Models.Vehicles;
 
 namespace VehicleTracking.Controllers
 {
@@ -20,32 +24,48 @@ namespace VehicleTracking.Controllers
         }
 
         [HttpPost]
-        [Route("api/vehicle/updateLocation")]
-        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
-        public async virtual Task<IActionResult> UpdateVehicleLocation(VehicleLocation vehicleLocation)
+        [Route("api/device/updateLocation")]
+        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Devices" })]
+        public virtual IActionResult UpdateVehicleLocation([FromBody] LocationUpdateRequest locationUpdate)
         {
-            var vehicleLocationId = await _deviceHelper.CreateVehicleLocation(vehicleLocation);
+            bool vehicleUpdated = _deviceHelper.UpdateVehicleLocation(locationUpdate);
 
-            if (vehicleLocationId == null)
-                return BadRequest("error saving vehicle location");
+            if (!vehicleUpdated)
+                return BadRequest();
 
-            return Ok(vehicleLocationId);
+
+            return Ok("vehicle location updated for vehicle ID: " + locationUpdate.VehicleId);
+        }
+
+        //assuming the device is the one needing to do the initial creation of vehicle and position
+        [HttpPost]
+        [Route("api/device/createVehicle")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation("CreateVehicle", Tags = new[] { "Devices" })]
+        public virtual IActionResult CreateVehicle([FromBody] VehicleRequest vehicleRequest)
+        {
+            var vehicleId = _deviceHelper.CreateVehicle(vehicleRequest);
+
+            if (vehicleId == null)
+                return BadRequest("error creating vehicle");
+
+            return Ok(vehicleId);
         }
 
         [HttpPost]
         [Route("api/device")]
         [SwaggerOperation("CreateDevice", Tags = new[] { "Devices" })]
-        public virtual IActionResult CreateDevice([FromBody] Device device)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateDevice()
         {
-            return new JsonResult(Ok());
-        }
+            var deviceId = await _deviceHelper.CreateDevice();
 
-        [HttpPut]
-        [Route("api/device/{deviceId}")]
-        [SwaggerOperation("ReplaceDevice", Tags = new[] { "Devices" })]
-        public virtual IActionResult ReplaceDevice(Guid deviceId, [FromBody] Device device)
-        {
-            return new JsonResult(Ok());
+            if (deviceId == null)
+                return BadRequest("error creating device");
+
+            return Ok(deviceId);
         }
 
         [HttpPost]

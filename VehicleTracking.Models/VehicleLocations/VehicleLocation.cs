@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using VehicleTracking.Models.Contracts;
 
 namespace VehicleTracking.Models.VehicleLocations
 {
     public class VehicleLocation : IEquatable<VehicleLocation>, IEntity
     {
+        [JsonIgnore]
         public Guid? Id { get; set; }
+        [JsonIgnore]
         public Guid VehicleId { get; set; }
         public List<Location> Locations { get; set; }
 

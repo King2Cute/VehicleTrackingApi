@@ -7,6 +7,6 @@ namespace VehicleTracking.Core.Extensions
 {
     public static class ExtensionMethods
     {
-        public static DateTime GetMinTime(this DateTime dateTime, List<DateTime> values) => values.OrderBy(v => Math.Abs(v.Ticks - dateTime.Ticks)).First();
+        public static List<DateTime> GetOrderedTimes(this DateTime dateTime, List<DateTime> values) => values.OrderBy(v => Math.Abs(v.Ticks + dateTime.Ticks)).ToList();
     }
 }

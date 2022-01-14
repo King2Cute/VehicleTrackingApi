@@ -2,9 +2,10 @@
 
 namespace VehicleTracking.Models.Vehicles
 {
-    public class VehicleType
+    public class VehicleStats
     {
-        public Guid VehicleTypeID { get; set; }
-        public string TypeName { get; set; }
+        public string Type { get; set; }
+        public int? FuelCapacity { get; set; }
+        public int? TopSpeed { get; set; }
     }
 }

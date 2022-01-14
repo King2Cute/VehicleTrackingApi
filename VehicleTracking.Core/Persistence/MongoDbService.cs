@@ -19,7 +19,7 @@ namespace VehicleTracking.Core.Persistence
             var client = new MongoClient(settings);
             var database = client.GetDatabase(config.GetConnectionString("DatabaseName"));
 
-            Users = database.GetCollection<User>("User");
+            Users = database.GetCollection<User>("Users");
             Vehicles = database.GetCollection<Vehicle>("Vehicles");
             VehicleLocations = database.GetCollection<VehicleLocation>("VehicleLocations");
             Devices = database.GetCollection<Device>("Devices");

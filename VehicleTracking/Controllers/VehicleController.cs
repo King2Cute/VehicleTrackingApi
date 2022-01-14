@@ -7,6 +7,7 @@ using VehicleTracking.Helpers;
 using VehicleTracking.Models;
 using VehicleTracking.Models.Vehicles;
 using VehicleTracking.Core.Persistence;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VehicleTracking.Controllers
 {
@@ -19,46 +20,46 @@ namespace VehicleTracking.Controllers
             _vehicleHelper = new VehicleHelper(_logger, _mongoDbService);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("api/vehicle/getPosition/{vehicleId}")]
-        [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Vehicles" })]
+        [SwaggerOperation("GetVehiclePosition", Tags = new[] { "Vehicles" })]
         public virtual IActionResult GetVehiclePosition([FromRoute] Guid vehicleId)
         {
-            return new JsonResult(Ok("GetVehiclePosition"));
+            try
+            {
+                var vehiclePosition = _vehicleHelper.GetVehiclePosition(vehicleId);
+                if (vehiclePosition == null)
+                    return BadRequest("can't find vehicle position");
+
+                return Ok(vehiclePosition);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("error getting vehicle position");
+                return BadRequest(e.Message);
+            }
         }
 
-        [HttpGet]
-        [Route("api/vehicle/getTimePosition/{vehicleId}")]
-        [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult GetTimeVehiclePosition([FromRoute] Guid vehicleId, [FromBody] TimeRange timeRange)
-        {
-            return new JsonResult(Ok());
-        }
-
-        //add auth
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("api/vehicle")]
-        [SwaggerOperation("CreateVehicle", Tags = new[] { "Vehicles" })]
-        public async virtual Task<IActionResult> CreateVehicle([FromBody] Vehicle vehicle)
+        [Route("api/vehicle/getTimePosition")]
+        [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
+        public virtual IActionResult GetTimeVehiclePosition([FromBody] VehicleRangeRequest timeRange)
         {
-            var vehicleId = await _vehicleHelper.CreateVehicle(vehicle); 
+            try
+            {
+                var vehicleRange = _vehicleHelper.GetVehiclePositionsFromRange(timeRange);
+                if (vehicleRange == null)
+                    return BadRequest("vehicle range is null");
 
-            if (vehicleId == null)
-                return BadRequest("error saving vehicle");
-
-            return Ok(vehicleId);
-        }
-
-        [HttpPut]
-        [Route("api/vehicle/{vehicleId}")]
-        [SwaggerOperation("ReplaceVehicle", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult ReplaceVehicle([FromRoute] Guid vehicleId, [FromBody] Vehicle vehicle)
-        {
-            //register vehicle
-
-            //register initial location
-
-            return new JsonResult(Ok());
+                return Ok(vehicleRange);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("error getting vehicle range");
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
@@ -66,8 +67,6 @@ namespace VehicleTracking.Controllers
         [SwaggerOperation("UpdateVehicle", Tags = new[] { "Vehicles" })]
         public virtual IActionResult UpdateVehicle([FromRoute] Guid vehicleId)
         {
-            
-
             return new JsonResult(Ok());
         }
 

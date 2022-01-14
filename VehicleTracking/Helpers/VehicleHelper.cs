@@ -61,24 +61,28 @@ namespace VehicleTracking.Helpers
         public Location GetVehiclePosition(Guid vehicleId)
         {
             var now = DateTime.Now;
-            var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.Id.Value == vehicleId).First();
-            var times = GetLocationTimes(vehicleLocation.Locations);
-            var min = now.GetMinTime(times);
+            var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.VehicleId == vehicleId).First();
 
-            return vehicleLocation.Locations.Where(x => x.Time == min).First();
+            if (vehicleLocation == null)
+                return null;
+
+            var times = GetLocationTimes(vehicleLocation.Locations);
+            var latestTime = now.GetOrderedTimes(times).Last();
+
+            return vehicleLocation.Locations.Where(x => x.Time == latestTime).First();
         }
 
-        public List<Location> GetVehiclePositionsFromRange(Guid vehicleId, DateTime startTime, DateTime endTime)
+        public List<Location> GetVehiclePositionsFromRange(VehicleRangeRequest timeRange)
         {
             var now = DateTime.Now;
             List<Location> locationInRange = new List<Location>();
 
             try
             {
-                var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.Id.Value == vehicleId).First();
+                var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.VehicleId == timeRange.VehicleId).First();
                 foreach (var location in vehicleLocation.Locations)
                 {
-                    if (location.Time >= startTime && location.Time <= endTime)
+                    if (location.Time >= timeRange.StartTime && location.Time <= timeRange.EndTime)
                     {
                         locationInRange.Add(location);
                     }
