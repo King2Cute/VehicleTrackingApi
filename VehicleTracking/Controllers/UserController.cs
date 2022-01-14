@@ -47,7 +47,10 @@ namespace VehicleTracking.Controllers
         public async virtual Task<IActionResult> CreateUser([FromBody] User user)
         {
 
-            var validEmail = IsValidEmail(user);
+            var validEmail = _userHelper.IsValidEmail(user.Email);
+
+            if (!validEmail)
+                return BadRequest("invalid email");
 
 
             var userId = await _userHelper.CreateUser(user);
