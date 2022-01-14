@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using VehicleTracking.Core.Persistence;
 using VehicleTracking.Helpers;
 using VehicleTracking.Models;
 using VehicleTracking.Models.Vehicles;
-using VehicleTracking.Core.Persistence;
-using Microsoft.AspNetCore.Authorization;
 
 namespace VehicleTracking.Controllers
 {
@@ -62,6 +65,7 @@ namespace VehicleTracking.Controllers
             }
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         [Route("api/vehicle/update")]
         [SwaggerOperation("UpdateVehicle", Tags = new[] { "Vehicles" })]
@@ -70,6 +74,7 @@ namespace VehicleTracking.Controllers
             return new JsonResult(Ok());
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet]
         [Route("api/vehicle/{vehicleId}")]
         [SwaggerOperation("GetVehicle", Tags = new[] { "Vehicles" })]
@@ -90,6 +95,14 @@ namespace VehicleTracking.Controllers
                 return StatusCode(400, e.Message);
             }
 
+        }
+
+        private string GetUserIdFromClaim()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+
+            return claims.First().Value;
         }
 
         private readonly ILogger<Vehicle> _logger;

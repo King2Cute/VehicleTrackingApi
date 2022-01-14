@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
-using VehicleTracking.Models.Devices;
+using VehicleTracking.Models.UserDevices;
 using VehicleTracking.Models.Users;
 using VehicleTracking.Models.VehicleLocations;
 using VehicleTracking.Models.Vehicles;
@@ -14,6 +12,7 @@ namespace VehicleTracking.Core.Persistence
         public MongoDbService(IConfiguration config)
         {
             var settings = MongoClientSettings.FromConnectionString(config.GetConnectionString("MongoConnection"));
+            settings.GuidRepresentation = MongoDB.Bson.GuidRepresentation.Standard;
             settings.AllowInsecureTls = true;
 
             var client = new MongoClient(settings);
@@ -22,13 +21,13 @@ namespace VehicleTracking.Core.Persistence
             Users = database.GetCollection<User>("Users");
             Vehicles = database.GetCollection<Vehicle>("Vehicles");
             VehicleLocations = database.GetCollection<VehicleLocation>("VehicleLocations");
-            Devices = database.GetCollection<Device>("Devices");
+            UserDevices = database.GetCollection<UserDevice>("UserDevices");
         }
 
 
         public IMongoCollection<User> Users { get; set; }
         public IMongoCollection<Vehicle> Vehicles { get; }
         public IMongoCollection<VehicleLocation> VehicleLocations { get; }
-        public IMongoCollection<Device> Devices { get; }
+        public IMongoCollection<UserDevice> UserDevices { get; }
     }
 }

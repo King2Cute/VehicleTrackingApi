@@ -1,10 +1,10 @@
-﻿using VehicleTracking.Models.Devices;
+﻿using VehicleTracking.Models.UserDevices;
 
 namespace VehicleTracking.Core.Persistence.Repositories
 {
-    public class DeviceRepository : BaseRepository<Device>, IDeviceRepository
+    public class UserDeviceRepository : BaseRepository<UserDevice>, IUserDeviceRepository
     {
-        public DeviceRepository(IMongoContext context) : base(context)
+        public UserDeviceRepository(IMongoContext context) : base(context)
         {
 
         }

@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using VehicleTracking.Models.Contracts;
 
-namespace VehicleTracking.Models.Devices
+namespace VehicleTracking.Models.UserDevices
 {
     public class Device : IEquatable<Device>, IEntity
     {
         [IgnoreDataMember]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
         public bool Online { get; set; }
         public DateTime CreationDate { get; set; }
 

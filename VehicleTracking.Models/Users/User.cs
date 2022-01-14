@@ -1,19 +1,14 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using VehicleTracking.Models.Contracts;
-using VehicleTracking.Models.Vehicles;
 
 namespace VehicleTracking.Models.Users
 {
     public class User : IEquatable<User>, IEntity
     {
         [JsonIgnore]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         [JsonIgnore]

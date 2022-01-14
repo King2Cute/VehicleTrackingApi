@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +33,7 @@ namespace VehicleTracking.Helpers
         {
             try
             {
-                var user = _mongoDbService.Users.AsQueryable().Where(v => v.Id.Value == id).First();
+                var user = _mongoDbService.Users.AsQueryable().Where(v => v.Id == id).First();
                 return user;
             }
             catch (Exception e)
@@ -52,7 +52,7 @@ namespace VehicleTracking.Helpers
 
                 if (userExists == null)
                 {
-                    if (!user.Id.HasValue)
+                    if (user.Id == new Guid())
                         user.Id = Guid.NewGuid();
 
                     user.Password = _cryptoHelper.HashPassword(user.Password);
@@ -60,10 +60,10 @@ namespace VehicleTracking.Helpers
                     var updatedUser = SetRoles(user);
 
                     await _mongoDbService.Users.InsertOneAsync(updatedUser);
-                    return user.Id.Value;
+                    return user.Id;
                 }
 
-                return userExists.Id.Value;
+                return userExists.Id;
             }
             catch (Exception e)
             {
@@ -92,12 +92,26 @@ namespace VehicleTracking.Helpers
                 if (savedUserRoles == null)
                     return null;
 
-                return GetJwtToken((Guid)user.Id, savedUserRoles);
+                return "Bearer " + GetJwtToken(user.Id, savedUserRoles);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message);
                 return null;
+            }
+        }
+
+        public bool IsValidEmail(string emailaddress)
+        {
+            try
+            {
+                MailAddress m = new MailAddress(emailaddress);
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
             }
         }
 
@@ -109,7 +123,8 @@ namespace VehicleTracking.Helpers
             {
                 userRoles.Add("Admin");
                 userRoles.Add("User");
-            } else
+            }
+            else
             {
                 userRoles.Add("User");
             }
@@ -129,7 +144,7 @@ namespace VehicleTracking.Helpers
 
             claims.Add(new Claim(ClaimTypes.NameIdentifier, Convert.ToString(userId)));
 
-            foreach(var userRole in userRoles)
+            foreach (var userRole in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
             }

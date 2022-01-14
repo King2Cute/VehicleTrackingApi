@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using VehicleTracking.Core;
 using VehicleTracking.Core.Persistence;
@@ -47,6 +46,10 @@ namespace VehicleTracking.Controllers
         [SwaggerOperation("CreateUser", Tags = new[] { "Users" })]
         public async virtual Task<IActionResult> CreateUser([FromBody] User user)
         {
+
+            var validEmail = IsValidEmail(user);
+
+
             var userId = await _userHelper.CreateUser(user);
 
             if (userId == null)

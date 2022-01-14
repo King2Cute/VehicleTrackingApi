@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using VehicleTracking.Models.Contracts;
 
@@ -9,7 +8,7 @@ namespace VehicleTracking.Models.Vehicles
     public class Vehicle : IEquatable<Vehicle>, IEntity
     {
         [JsonIgnore]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
         public Guid? DeviceId { get; set; }
         public string Registration { get; set; }
         public VehicleStats VehicleStats { get; set; }
@@ -32,7 +31,7 @@ namespace VehicleTracking.Models.Vehicles
 
         public override int GetHashCode()
         {
-           unchecked
+            unchecked
             {
                 var hashCode = 17;
                 if (Id != null)

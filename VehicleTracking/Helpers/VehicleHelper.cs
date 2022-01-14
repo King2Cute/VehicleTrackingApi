@@ -21,7 +21,7 @@ namespace VehicleTracking.Helpers
 
         public async Task<Guid?> CreateVehicle(Vehicle vehicle)
         {
-            if (!vehicle.Id.HasValue)
+            if (vehicle.Id == new Guid())
                 vehicle.Id = Guid.NewGuid();
 
             try
@@ -29,7 +29,7 @@ namespace VehicleTracking.Helpers
                 await _mongoDbService.Vehicles.InsertOneAsync(vehicle);
                 return (Guid)vehicle.Id;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "Error saving vehicle");
             }
@@ -39,7 +39,7 @@ namespace VehicleTracking.Helpers
 
         public async Task<bool> ReplaceVehicle(Guid vehicleId, Vehicle vehicle)
         {
-            var result = await _mongoDbService.Vehicles.ReplaceOneAsync(e => e.Id.Value == vehicleId, vehicle);
+            var result = await _mongoDbService.Vehicles.ReplaceOneAsync(e => e.Id == vehicleId, vehicle);
             return result.ModifiedCount == 1 ? true : false;
         }
 
@@ -47,7 +47,7 @@ namespace VehicleTracking.Helpers
         {
             try
             {
-                var vehicle = _mongoDbService.Vehicles.AsQueryable().Where(v => v.Id.Value == vehicleId).First();
+                var vehicle = _mongoDbService.Vehicles.AsQueryable().Where(v => v.Id == vehicleId).First();
                 return vehicle;
             }
             catch (Exception e)
@@ -109,7 +109,7 @@ namespace VehicleTracking.Helpers
 
         public async Task<bool> DeleteVehicle(Guid vehicleId)
         {
-            var result = await _mongoDbService.Vehicles.DeleteOneAsync(v => v.Id.Value == vehicleId);
+            var result = await _mongoDbService.Vehicles.DeleteOneAsync(v => v.Id == vehicleId);
             return result.DeletedCount == 1 ? true : false;
         }
 

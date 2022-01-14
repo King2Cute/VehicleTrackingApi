@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VehicleTracking.Models.Requests
+﻿namespace VehicleTracking.Models.Requests
 {
     public class LoginRequest
     {
