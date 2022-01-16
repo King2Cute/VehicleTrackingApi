@@ -26,7 +26,7 @@ namespace VehicleTracking.Controllers
         [HttpGet]
         [Route("api/vehicle/getPosition/{vehicleId}")]
         [SwaggerOperation("GetVehiclePosition", Tags = new[] { "Vehicles" })]
-        public async Task<IActionResult> GetVehiclePosition([FromRoute] Guid vehicleId)
+        public IActionResult GetVehiclePosition([FromRoute] Guid vehicleId)
         {
             try
             {
