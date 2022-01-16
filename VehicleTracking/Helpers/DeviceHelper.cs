@@ -136,7 +136,7 @@ namespace VehicleTracking.Helpers
                     };
                     await _mongoDbService.UserDevices.InsertOneAsync(userDevice);
 
-                    return userDevice.Id;
+                    return userDevice.Devices[0].Id;
                 }
             }
             catch (Exception e)
