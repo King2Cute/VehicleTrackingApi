@@ -11,7 +11,7 @@ namespace VehicleTracking.Models.VehicleLocations
         public Guid Id { get; set; }
         [JsonIgnore]
         public Guid VehicleId { get; set; }
-        public List<Location> Locations { get; set; }
+        public List<BaseLocation> Locations { get; set; }
 
         public override bool Equals(object obj)
         {

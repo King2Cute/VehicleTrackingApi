@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using VehicleTracking.Core;
 using VehicleTracking.Core.Persistence;
+using Newtonsoft.Json;
 
 namespace VehicleTracking
 {

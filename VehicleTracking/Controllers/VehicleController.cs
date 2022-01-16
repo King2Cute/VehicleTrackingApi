@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Swashbuckle.AspNetCore.Annotations;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using VehicleTracking.Core.Persistence;
 using VehicleTracking.Helpers;
 using VehicleTracking.Models;
@@ -16,22 +18,23 @@ namespace VehicleTracking.Controllers
 {
     public class VehicleController : Controller
     {
-        public VehicleController(ILogger<Vehicle> logger, MongoDbService mongoDbService)
+        public VehicleController(IConfiguration config, ILogger<Vehicle> logger, MongoDbService mongoDbService)
         {
+            _config = config;
             _logger = logger;
             _mongoDbService = mongoDbService;
-            _vehicleHelper = new VehicleHelper(_logger, _mongoDbService);
+            _vehicleHelper = new VehicleHelper(_config, _logger, _mongoDbService);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("api/vehicle/getPosition/{vehicleId}")]
         [SwaggerOperation("GetVehiclePosition", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult GetVehiclePosition([FromRoute] Guid vehicleId)
+        public async Task<IActionResult> GetVehiclePosition([FromRoute] Guid vehicleId)
         {
             try
             {
-                var vehiclePosition = _vehicleHelper.GetVehiclePosition(vehicleId);
+                var vehiclePosition = await _vehicleHelper.GetVehiclePosition(vehicleId);
                 if (vehiclePosition == null)
                     return BadRequest("can't find vehicle position");
 
@@ -48,11 +51,11 @@ namespace VehicleTracking.Controllers
         [HttpPost]
         [Route("api/vehicle/getTimePosition")]
         [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult GetTimeVehiclePosition([FromBody] VehicleRangeRequest timeRange)
+        public async Task<IActionResult> GetTimeVehiclePosition([FromBody] VehicleRangeRequest timeRange)
         {
             try
             {
-                var vehicleRange = _vehicleHelper.GetVehiclePositionsFromRange(timeRange);
+                var vehicleRange = await _vehicleHelper.GetVehiclePositionsFromRange(timeRange);
                 if (vehicleRange == null)
                     return BadRequest("vehicle range is null");
 
@@ -105,6 +108,7 @@ namespace VehicleTracking.Controllers
             return claims.First().Value;
         }
 
+        private readonly IConfiguration _config;
         private readonly ILogger<Vehicle> _logger;
         private readonly VehicleHelper _vehicleHelper;
         private readonly MongoDbService _mongoDbService;

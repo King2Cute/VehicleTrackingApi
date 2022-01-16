@@ -1,22 +1,29 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using VehicleTracking.Core.Extensions;
+using VehicleTracking.Core.GoogleAPIs;
 using VehicleTracking.Core.Persistence;
 using VehicleTracking.Models;
+using VehicleTracking.Models.GoogleGeoCode;
 using VehicleTracking.Models.Vehicles;
 
 namespace VehicleTracking.Helpers
 {
     public class VehicleHelper
     {
-        public VehicleHelper(ILogger<Vehicle> logger, MongoDbService mongoDbService)
+        public VehicleHelper(IConfiguration config, ILogger<Vehicle> logger, MongoDbService mongoDbService)
         {
+            _config = config;
             _logger = logger;
             _mongoDbService = mongoDbService;
+            _geoCoding = new GeoCoding(_config, _logger);
         }
 
         public async Task<Guid?> CreateVehicle(Vehicle vehicle)
@@ -58,7 +65,7 @@ namespace VehicleTracking.Helpers
             return null;
         }
 
-        public Location GetVehiclePosition(Guid vehicleId)
+        public async Task<BaseLocation> GetVehiclePosition(Guid vehicleId)
         {
             var now = DateTime.Now;
             var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.VehicleId == vehicleId).First();
@@ -69,13 +76,16 @@ namespace VehicleTracking.Helpers
             var times = GetLocationTimes(vehicleLocation.Locations);
             var latestTime = now.GetOrderedTimes(times).Last();
 
-            return vehicleLocation.Locations.Where(x => x.Time == latestTime).First();
+            var location = vehicleLocation.Locations.Where(x => x.Time == latestTime).First();
+            location = await _geoCoding.GetGoogleGeoAsync(location);
+
+            return location;
         }
 
-        public List<Location> GetVehiclePositionsFromRange(VehicleRangeRequest timeRange)
+        public async Task<List<BaseLocation>> GetVehiclePositionsFromRange(VehicleRangeRequest timeRange)
         {
             var now = DateTime.Now;
-            List<Location> locationInRange = new List<Location>();
+            List<BaseLocation> locationInRange = new List<BaseLocation>();
 
             try
             {
@@ -84,7 +94,8 @@ namespace VehicleTracking.Helpers
                 {
                     if (location.Time >= timeRange.StartTime && location.Time <= timeRange.EndTime)
                     {
-                        locationInRange.Add(location);
+                        var updatedLocation = await _geoCoding.GetGoogleGeoAsync(location);
+                        locationInRange.Add(updatedLocation);
                     }
                 }
             }
@@ -96,7 +107,7 @@ namespace VehicleTracking.Helpers
             return locationInRange;
         }
 
-        private List<DateTime> GetLocationTimes(List<Location> locations)
+        private List<DateTime> GetLocationTimes(List<BaseLocation> locations)
         {
             List<DateTime> times = new List<DateTime>();
             foreach (var location in locations)
@@ -113,7 +124,9 @@ namespace VehicleTracking.Helpers
             return result.DeletedCount == 1 ? true : false;
         }
 
-        private readonly ILogger _logger;
+        private readonly IConfiguration _config;
+        private readonly ILogger<Vehicle> _logger;
         private readonly MongoDbService _mongoDbService;
+        private readonly GeoCoding _geoCoding;
     }
 }

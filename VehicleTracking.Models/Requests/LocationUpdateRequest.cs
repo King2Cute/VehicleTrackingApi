@@ -6,6 +6,6 @@ namespace VehicleTracking.Models.Requests
     {
         public Guid VehicleId { get; set; }
         public Guid DeviceId { get; set; }
-        public Location Location { get; set; }
+        public BaseLocation Location { get; set; }
     }
 }
