@@ -14,7 +14,7 @@ namespace VehicleTracking.Core.GoogleAPIs
 {
     public class GeoCoding
     {
-        public GeoCoding(IConfiguration config, ILogger<Vehicle> logger)
+        public GeoCoding(IConfiguration config, ILogger logger)
         {
             _logger = logger;
 
@@ -38,24 +38,6 @@ namespace VehicleTracking.Core.GoogleAPIs
             location.Name = googleResult.Results[0].Formatted_Address;
 
             return location;
-        }
-
-        public async Task<List<BaseLocation>> GetGoogleGeoRange(List<BaseLocation> locations)
-        {
-            foreach(var location in locations)
-            {
-                var googleResult = await GetGeoCodeResult(location);
-
-                if (googleResult == null)
-                {
-                    _logger.LogError("Google request returned null");
-                    return null;
-                }
-
-                location.Name = googleResult.Results[0].Formatted_Address;
-            }
-
-            return locations;
         }
 
         private async Task<GoogleGeoCode> GetGeoCodeResult(BaseLocation location)

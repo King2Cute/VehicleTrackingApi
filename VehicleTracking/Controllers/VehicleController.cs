@@ -2,12 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using VehicleTracking.Core.Persistence;
 using VehicleTracking.Helpers;
@@ -34,7 +30,7 @@ namespace VehicleTracking.Controllers
         {
             try
             {
-                var vehiclePosition = await _vehicleHelper.GetVehiclePosition(vehicleId);
+                var vehiclePosition = _vehicleHelper.GetVehiclePosition(vehicleId);
                 if (vehiclePosition == null)
                     return BadRequest("can't find vehicle position");
 
@@ -51,11 +47,11 @@ namespace VehicleTracking.Controllers
         [HttpPost]
         [Route("api/vehicle/getTimePosition")]
         [SwaggerOperation("GetTimeVehiclePosition", Tags = new[] { "Vehicles" })]
-        public async Task<IActionResult> GetTimeVehiclePosition([FromBody] VehicleRangeRequest timeRange)
+        public IActionResult GetTimeVehiclePosition([FromBody] VehicleRangeRequest timeRange)
         {
             try
             {
-                var vehicleRange = await _vehicleHelper.GetVehiclePositionsFromRange(timeRange);
+                var vehicleRange = _vehicleHelper.GetVehiclePositionsFromRange(timeRange);
                 if (vehicleRange == null)
                     return BadRequest("vehicle range is null");
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Swashbuckle.AspNetCore.Annotations;
@@ -18,20 +19,21 @@ namespace VehicleTracking.Controllers
 {
     public class UserDeviceController : Controller
     {
-        public UserDeviceController(ILogger<UserDevice> logger, MongoDbService mongoDbService)
+        public UserDeviceController(IConfiguration config, ILogger<UserDevice> logger, MongoDbService mongoDbService)
         {
+            _config = config;
             _logger = logger;
             _mongoDbService = mongoDbService;
-            _deviceHelper = new DeviceHelper(_logger, _mongoDbService);
+            _deviceHelper = new DeviceHelper(_config, _logger, _mongoDbService);
         }
 
         [Authorize(Roles = "User")]
         [HttpPost]
         [Route("api/device/updateLocation")]
         [SwaggerOperation("UpdateVehicleLocation", Tags = new[] { "Devices" })]
-        public virtual IActionResult UpdateVehicleLocation([FromBody] LocationUpdateRequest locationUpdate)
+        public async Task<IActionResult> UpdateVehicleLocation([FromBody] LocationUpdateRequest locationUpdate)
         {
-            bool vehicleUpdated = _deviceHelper.UpdateVehicleLocation(GetUserIdFromClaim(), locationUpdate);
+            bool vehicleUpdated = await _deviceHelper.UpdateVehicleLocation(GetUserIdFromClaim(), locationUpdate);
 
             if (!vehicleUpdated)
                 return BadRequest();
@@ -137,6 +139,7 @@ namespace VehicleTracking.Controllers
             return claims.First().Value;
         }
 
+        private readonly IConfiguration _config;
         private readonly ILogger<UserDevice> _logger;
         private readonly DeviceHelper _deviceHelper;
         private readonly MongoDbService _mongoDbService;

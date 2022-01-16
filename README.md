@@ -90,8 +90,9 @@ Dependencies
 [Microsoft.Extensions.Configuration.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Abstractions/) v6.0.0  
 [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions) v6.0.0  
 [Microsoft.Extensions.Options](https://www.nuget.org/packages/Microsoft.Extensions.Options/) v6.0.0  
-[Microsoft.Extensions.Options.ConfigurationExtensions](https://www.nuget.org/packages/Microsoft.Extensions.Options.ConfigurationExtensions) v6.0.0  
+[Microsoft.Extensions.Options.ConfigurationExtensions](https://www.nuget.org/packages/Microsoft.Extensions.Options.ConfigurationExtensions) v6.0.0
 [MongoDB.Bson](https://www.nuget.org/packages/MongoDB.Bson) v2.14.1  
+[Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) v13.0.1
 
 ### VehicleTracking.Models ###
 [MongoDB.Bson](https://www.nuget.org/packages/MongoDB.Bson) v2.14.1  

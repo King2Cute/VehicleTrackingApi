@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VehicleTracking.Core.GoogleAPIs;
 using VehicleTracking.Core.Persistence;
+using VehicleTracking.Models.GoogleGeoCode;
 using VehicleTracking.Models.Requests;
 using VehicleTracking.Models.UserDevices;
 using VehicleTracking.Models.VehicleLocations;
@@ -13,10 +16,12 @@ namespace VehicleTracking.Helpers
 {
     public class DeviceHelper
     {
-        public DeviceHelper(ILogger<UserDevice> logger, MongoDbService mongoDbService)
+        public DeviceHelper(IConfiguration config, ILogger<UserDevice> logger, MongoDbService mongoDbService)
         {
+            _config = config;
             _logger = logger;
             _mongoDbService = mongoDbService;
+            _geoCoding = new GeoCoding(_config, _logger);
         }
 
         public async Task<Guid?> CreateVehicle(VehicleRequest vehicleRequest)
@@ -35,6 +40,9 @@ namespace VehicleTracking.Helpers
             try
             {
                 await _mongoDbService.Vehicles.InsertOneAsync(vehicleRequest.Vehicle);
+
+                vehicleRequest.VehicleLocation.Locations[0] = await _geoCoding.GetGoogleGeoAsync(vehicleRequest.VehicleLocation.Locations[0]);
+
                 await _mongoDbService.VehicleLocations.InsertOneAsync(vehicleRequest.VehicleLocation);
             }
             catch (Exception e)
@@ -46,7 +54,7 @@ namespace VehicleTracking.Helpers
             return vehicleRequest.Vehicle.Id;
         }
 
-        public bool UpdateVehicleLocation(string userId, LocationUpdateRequest locationUpdate)
+        public async Task<bool> UpdateVehicleLocation(string userId, LocationUpdateRequest locationUpdate)
         {
             try
             {
@@ -68,6 +76,8 @@ namespace VehicleTracking.Helpers
 
                 if (vehicleLocation == null)
                     return false;
+
+                locationUpdate.Location = await _geoCoding.GetGoogleGeoAsync(locationUpdate.Location);
 
                 vehicleLocation.Locations.Add(locationUpdate.Location);
 
@@ -175,7 +185,9 @@ namespace VehicleTracking.Helpers
             return result.ModifiedCount == 1;
         }
 
+        private readonly IConfiguration _config;
         private readonly ILogger _logger;
         private readonly MongoDbService _mongoDbService;
+        private readonly GeoCoding _geoCoding;
     }
 }

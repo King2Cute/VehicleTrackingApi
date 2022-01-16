@@ -1,17 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using VehicleTracking.Core.Extensions;
 using VehicleTracking.Core.GoogleAPIs;
 using VehicleTracking.Core.Persistence;
 using VehicleTracking.Models;
-using VehicleTracking.Models.GoogleGeoCode;
 using VehicleTracking.Models.Vehicles;
 
 namespace VehicleTracking.Helpers
@@ -47,7 +44,7 @@ namespace VehicleTracking.Helpers
             return null;
         }
 
-        public async Task<BaseLocation> GetVehiclePosition(Guid vehicleId)
+        public BaseLocation GetVehiclePosition(Guid vehicleId)
         {
             var now = DateTime.Now;
             var vehicleLocation = _mongoDbService.VehicleLocations.AsQueryable().Where(x => x.VehicleId == vehicleId).First();
@@ -59,12 +56,11 @@ namespace VehicleTracking.Helpers
             var latestTime = now.GetOrderedTimes(times).Last();
 
             var location = vehicleLocation.Locations.Where(x => x.Time == latestTime).First();
-            location = await _geoCoding.GetGoogleGeoAsync(location);
 
             return location;
         }
 
-        public async Task<List<BaseLocation>> GetVehiclePositionsFromRange(VehicleRangeRequest timeRange)
+        public List<BaseLocation> GetVehiclePositionsFromRange(VehicleRangeRequest timeRange)
         {
             var now = DateTime.Now;
             List<BaseLocation> locationInRange = new List<BaseLocation>();
@@ -76,8 +72,7 @@ namespace VehicleTracking.Helpers
                 {
                     if (location.Time >= timeRange.StartTime && location.Time <= timeRange.EndTime)
                     {
-                        var updatedLocation = await _geoCoding.GetGoogleGeoAsync(location);
-                        locationInRange.Add(updatedLocation);
+                        locationInRange.Add(location);
                     }
                 }
             }
