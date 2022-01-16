@@ -68,13 +68,26 @@ namespace VehicleTracking.Controllers
             }
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("api/vehicle/update")]
-        [SwaggerOperation("UpdateVehicle", Tags = new[] { "Vehicles" })]
-        public virtual IActionResult UpdateVehicle([FromRoute] Guid vehicleId)
+        [Route("api/vehicle/delete")]
+        [SwaggerOperation("DeleteVehicle", Tags = new[] { "Vehicles" })]
+        public virtual IActionResult DeleteVehicle([FromRoute] Guid vehicleId)
         {
-            return new JsonResult(Ok());
+            try
+            {
+                var vehicle = _vehicleHelper.DeleteVehicle(vehicleId);
+
+                if (vehicle == null)
+                    return StatusCode(204, "No vehicle found");
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error deleteing vehicle");
+                return StatusCode(400, e.Message);
+            }
         }
 
         [Authorize(Roles = "User")]
@@ -97,15 +110,6 @@ namespace VehicleTracking.Controllers
                 _logger.LogError(e, "Error getting vehicle");
                 return StatusCode(400, e.Message);
             }
-
-        }
-
-        private string GetUserIdFromClaim()
-        {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-
-            return claims.First().Value;
         }
 
         private readonly IConfiguration _config;

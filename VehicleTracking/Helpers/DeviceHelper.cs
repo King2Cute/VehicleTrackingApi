@@ -137,6 +137,44 @@ namespace VehicleTracking.Helpers
             return null;
         }
 
+        public UserDevice GetDevice(Guid userId)
+        {
+            try
+            {
+                var userDevice = _mongoDbService.UserDevices.AsQueryable().Where(v => v.UserId == userId).FirstOrDefault();
+                return userDevice;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error getting userDevice");
+            }
+
+            return null;
+        }
+
+        public async Task<bool> DeleteDevice(Guid userId, Guid deviceId)
+        {
+            var userDevices = _mongoDbService.UserDevices.AsQueryable().Where(x => x.UserId == userId).FirstOrDefault();
+
+            if (userDevices == null)
+                return false;
+
+            var devices = userDevices.Devices;
+
+            var device = devices.Where(x => x.Id == deviceId).FirstOrDefault();
+
+            if (device == null)
+                return false;
+
+            devices.Remove(device);
+
+            var filter = Builders<UserDevice>.Filter.Eq("_id", userDevices.Id);
+            var update = Builders<UserDevice>.Update.Set("Devices", devices);
+            var result = await _mongoDbService.UserDevices.UpdateOneAsync(filter, update);
+
+            return result.ModifiedCount == 1;
+        }
+
         private readonly ILogger _logger;
         private readonly MongoDbService _mongoDbService;
     }

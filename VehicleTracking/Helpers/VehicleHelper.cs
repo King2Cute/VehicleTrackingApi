@@ -26,24 +26,6 @@ namespace VehicleTracking.Helpers
             _geoCoding = new GeoCoding(_config, _logger);
         }
 
-        public async Task<Guid?> CreateVehicle(Vehicle vehicle)
-        {
-            if (vehicle.Id == new Guid())
-                vehicle.Id = Guid.NewGuid();
-
-            try
-            {
-                await _mongoDbService.Vehicles.InsertOneAsync(vehicle);
-                return (Guid)vehicle.Id;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error saving vehicle");
-            }
-
-            return null;
-        }
-
         public async Task<bool> ReplaceVehicle(Guid vehicleId, Vehicle vehicle)
         {
             var result = await _mongoDbService.Vehicles.ReplaceOneAsync(e => e.Id == vehicleId, vehicle);

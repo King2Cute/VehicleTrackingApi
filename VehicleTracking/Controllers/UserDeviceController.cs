@@ -86,21 +86,47 @@ namespace VehicleTracking.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [Route("api/device/update")]
-        [SwaggerOperation("UpdateDevice", Tags = new[] { "Devices" })]
-        public virtual IActionResult UpdateDevice([FromBody] Device device)
+        [HttpGet]
+        [Route("api/device/{userId}")]
+        [SwaggerOperation("GetDevice", Tags = new[] { "Devices" })]
+        public virtual IActionResult GetDevice([FromRoute] Guid userId)
         {
-            return new JsonResult(Ok());
+            try
+            {
+                var getDevice = _deviceHelper.GetDevice(userId);
+
+                if (getDevice == null)
+                    return BadRequest("error getting device");
+
+                return Ok(getDevice);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return BadRequest("Error getting device");
+            }
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("api/device/{deviceId}")]
         [SwaggerOperation("GetDevice", Tags = new[] { "Devices" })]
-        public virtual IActionResult GetDevice([FromRoute] string deviceId)
+        public async Task<IActionResult> DeleteDevice([FromRoute] Guid deviceId)
         {
-            return new JsonResult(Ok());
+            try
+            {
+                var deletedDevice = await _deviceHelper.DeleteDevice(Guid.Parse(GetUserIdFromClaim()), deviceId);
+
+                if (!deletedDevice)
+                    return BadRequest("error deleting device");
+
+                return Ok(deviceId + " deleted");
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+                return BadRequest("Error deleting device");
+            }
         }
 
         private string GetUserIdFromClaim()
