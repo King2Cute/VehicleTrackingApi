@@ -42,7 +42,7 @@ namespace VehicleTracking.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("api/user/create")]
+        [Route("api/user")]
         [SwaggerOperation("CreateUser", Tags = new[] { "Users" })]
         public async virtual Task<IActionResult> CreateUser([FromBody] User user)
         {
